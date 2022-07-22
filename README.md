@@ -19,7 +19,19 @@
 - [MySQL Streamer](https://github.com/Yelp/mysql_streamer) from Yelp
 - DBLog (Not open source yet) from Netflix
 
+## To check if binlog is enabled: 
+- `SHOW GLOBAL VARIABLES LIKE '%BINLOG%';`
+- `SHOW VARIABLES LIKE '%log%';`
+- `SHOW BINARY LOGS;`
+    - `Error Code: 1381. You are not using binary`
+## To check the binary log data directory with the following command:
+- `SHOW VARIABLES LIKE 'datadir';`
+  | Variable_name | Value |
+  |---|---|
+  | datadir | /rdsdbdata/db/ |
+---
 ## Binlog may not be enabled by default. To enable it the update MySQL configuration:
+
 ```
 server-id         = 42
 log_bin           = mysql-bin
@@ -30,7 +42,11 @@ expire_logs_days  = 10
 binlog_row_image  = FULL
 ```
 
----
+- $ `nano /etc/mysql/mariadb.conf.d/50-server.cnf`
+- Add the following lines:
+  - `log_bin = /var/log/mysql/mysql-bin.log expire_logs_days = 10 max_binlog_size = 100M binlog_format = mixed`
+- Save and close the file when you are finished. Next, restart the MySQL service to apply the changes.
+  - `systemctl restart mariadb`
 ## Useful Links:
 - Netflix Technology Blog: [DBLog: A Generic Change-Data-Capture Framework](https://netflixtechblog.com/dblog-a-generic-change-data-capture-framework-69351fb9099b)
 - DataCater: [MySQL Change Data Capture (CDC): The Complete Guide](https://datacater.io/blog/2021-08-25/mysql-cdc-complete-guide.html#cdc-binlog)
